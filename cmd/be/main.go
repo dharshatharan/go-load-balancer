@@ -20,7 +20,7 @@ func main() {
 		log.Printf("User-Agent: %s\n", r.UserAgent())
 		log.Printf("Accept: %s\n", r.Header["Accept"])
 
-		fmt.Fprintf(w, "Hello from backend server!")
+		fmt.Fprintf(w, "Hello from backend server at %s!", strconv.Itoa(*port))
 		log.Printf("Replied with a hello message\n")
 	})
 

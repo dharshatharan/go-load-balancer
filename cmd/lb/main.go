@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
+
+	"github.com/dharshatharan/go-load-balancer/pkg/loadbalancer"
 )
 
 type myTransport struct{}
@@ -23,21 +23,7 @@ func (t *myTransport) RoundTrip(request *http.Request) (*http.Response, error) {
 
 func main() {
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Received request form %s\n", r.RemoteAddr)
-		log.Printf("%s %s %s\n", r.Method, r.URL.Path, r.Proto)
-		log.Printf("Host: %s\n", r.Host)
-		log.Printf("User-Agent: %s\n", r.UserAgent())
-		log.Printf("Accept: %s\n", r.Header["Accept"])
-
-		url, err := url.Parse("http://localhost:8081")
-		if err != nil {
-			log.Fatal(err)
-		}
-		proxy := httputil.NewSingleHostReverseProxy(url)
-		proxy.Transport = &myTransport{}
-		proxy.ServeHTTP(w, r)
-	})
+	http.HandleFunc("/", balance)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
