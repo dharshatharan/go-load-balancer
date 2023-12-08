@@ -22,8 +22,11 @@ func (t *myTransport) RoundTrip(request *http.Request) (*http.Response, error) {
 }
 
 func main() {
+	loadbalancer.Init()
 
 	http.HandleFunc("/", loadbalancer.Balance)
+
+	log.Printf("Load Balancer started at :8080\n")
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 

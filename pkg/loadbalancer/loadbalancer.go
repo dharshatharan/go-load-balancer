@@ -7,6 +7,8 @@ import (
 	"net/url"
 )
 
+var serverPool pool
+
 type myTransport struct{}
 
 // Custom Transport to print out request and response details
@@ -29,14 +31,30 @@ func PrintRequestDetails(r *http.Request) {
 	log.Printf("Accept: %s\n", r.Header["Accept"])
 }
 
+func createServers() {
+	ports := []string{"8081", "8082"}
+	for _, port := range ports {
+		url, err := url.Parse("http://localhost:" + port)
+		if err != nil {
+			log.Fatal(err)
+		}
+		proxy := httputil.NewSingleHostReverseProxy(url)
+		proxy.Transport = &myTransport{}
+		serverPool.servers = append(serverPool.servers, &server{url: url, proxy: proxy})
+	}
+}
+
+func Init() {
+	createServers()
+}
+
 func Balance(w http.ResponseWriter, r *http.Request) {
 	PrintRequestDetails(r)
 
-	url, err := url.Parse("http://localhost:8081")
-	if err != nil {
-		log.Fatal(err)
+	server := serverPool.next()
+	if server == nil {
+		http.Error(w, "Service not available", http.StatusServiceUnavailable)
+		return
 	}
-	proxy := httputil.NewSingleHostReverseProxy(url)
-	proxy.Transport = &myTransport{}
-	proxy.ServeHTTP(w, r)
+	server.proxy.ServeHTTP(w, r)
 }

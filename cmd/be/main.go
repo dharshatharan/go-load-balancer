@@ -15,6 +15,8 @@ func main() {
 	port := flag.Int("p", 8081, "port number")
 	flag.Parse()
 
+	log.Printf("Starting server at port %d\n", *port)
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		loadbalancer.PrintRequestDetails(r)
 
