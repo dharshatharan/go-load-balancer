@@ -21,7 +21,7 @@ func (t *myTransport) RoundTrip(request *http.Request) (*http.Response, error) {
 	return response, nil
 }
 
-func printRequestDetails(r *http.Request) {
+func PrintRequestDetails(r *http.Request) {
 	log.Printf("Received request form %s\n", r.RemoteAddr)
 	log.Printf("%s %s %s\n", r.Method, r.URL.Path, r.Proto)
 	log.Printf("Host: %s\n", r.Host)
@@ -29,8 +29,8 @@ func printRequestDetails(r *http.Request) {
 	log.Printf("Accept: %s\n", r.Header["Accept"])
 }
 
-func balance(w http.ResponseWriter, r *http.Request) {
-	printRequestDetails(r)
+func Balance(w http.ResponseWriter, r *http.Request) {
+	PrintRequestDetails(r)
 
 	url, err := url.Parse("http://localhost:8081")
 	if err != nil {

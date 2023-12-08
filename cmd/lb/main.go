@@ -23,7 +23,7 @@ func (t *myTransport) RoundTrip(request *http.Request) (*http.Response, error) {
 
 func main() {
 
-	http.HandleFunc("/", balance)
+	http.HandleFunc("/", loadbalancer.Balance)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
