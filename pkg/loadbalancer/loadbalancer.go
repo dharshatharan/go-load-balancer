@@ -46,15 +46,18 @@ func createServers() {
 
 func Init() {
 	createServers()
+	go serverPool.initHealthCheck()
 }
 
 func Balance(w http.ResponseWriter, r *http.Request) {
 	PrintRequestDetails(r)
 
-	server := serverPool.next()
-	if server == nil {
-		http.Error(w, "Service not available", http.StatusServiceUnavailable)
+	server, err := serverPool.next()
+	if err != nil {
+		log.Printf(err.Error())
+		http.Error(w, "No server available", http.StatusServiceUnavailable)
 		return
 	}
+
 	server.proxy.ServeHTTP(w, r)
 }

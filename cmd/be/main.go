@@ -24,6 +24,10 @@ func main() {
 		log.Printf("Replied with a hello message\n")
 	})
 
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "I am alive!")
+	})
+
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(*port), nil))
 
 }
